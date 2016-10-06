@@ -16,7 +16,7 @@ class OrderItem
         $this->ItemName = $itemName;
         $this->UnitPrice = $unitPrice;
         $this->Quantity = $quantity;
-        $this->SubTotal = $unitPrice + $quantity;
+        $this->SubTotal = $unitPrice * $quantity;
     }
 
     public function subTotal()
