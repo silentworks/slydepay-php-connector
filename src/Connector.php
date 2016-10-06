@@ -3,6 +3,7 @@
 namespace Slydepay;
 
 use SoapClient;
+use SoapHeader;
 
 class Connector
 {
@@ -27,7 +28,9 @@ class Connector
             'SvcType' => $serviceType,
             'UseIntMode' => $integrationMode,
         ];
-        $this->soap->__setSoapHeaders($this->namespace, "PaymentHeader", $headers);
+
+        $soapHeader = new SoapHeader($this->namespace, "PaymentHeader", $headers);
+        $this->soap->__setSoapHeaders($soapHeader);
     }
 
     public function processPaymentOrder($orderId, $subTotal, $shippingCost, $taxAmount, $total, $comment1, $comment2 = null, array $orderItems)
