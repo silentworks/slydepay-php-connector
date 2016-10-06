@@ -4,6 +4,8 @@ namespace Slydepay;
 
 use SoapClient;
 use SoapHeader;
+use Slydepay\Order\OrderAmount;
+use Slydepay\Order\OrderItems;
 
 class Connector
 {
@@ -33,18 +35,23 @@ class Connector
         $this->soap->__setSoapHeaders($soapHeader);
     }
 
-    public function processPaymentOrder($orderId, $subTotal, $shippingCost, $taxAmount, $total, $comment1, $comment2 = null, array $orderItems)
-    {
+    public function processPaymentOrder(
+        $orderId, 
+        $description,
+        OrderAmount $orderAmount, 
+        OrderItems $orderItems, 
+        $comment = null
+    ) {
         try {
             $params = [
                 'orderId' => $orderId,
-                'subtotal' => $subTotal,
-                'shippingCost' => $shippingCost,
-                'taxAmount' => $taxAmount,
-                'total' => $total,
-                'comment1' => $comment1,
-                'comment2' => $comment2,
-                'orderItems' => $orderItems
+                'subtotal' => $orderAmount->subTotal(),
+                'shippingCost' => $orderAmount->shippingCost(),
+                'taxAmount' => $orderAmount->taxAmount(),
+                'total' => $orderAmount->total(),
+                'comment1' => $description,
+                'comment2' => $comment,
+                'orderItems' => $orderItems->toArray()
             ];
             return $this->soap->ProcessPaymentOrder($params);
         } catch (\Exception $e) {

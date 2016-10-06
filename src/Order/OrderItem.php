@@ -1,6 +1,6 @@
 <?php
 
-namespace Slydepay;
+namespace Slydepay\Order;
 
 class OrderItem
 {
@@ -10,12 +10,17 @@ class OrderItem
     protected $Quantity;
     protected $SubTotal;
 
-    public function __construct($itemCode, $itemName, $unitPrice, $quantity, $subTotal)
+    public function __construct($itemCode, $itemName, $unitPrice, $quantity)
     {
         $this->ItemCode = $itemCode;
         $this->ItemName = $itemName;
         $this->UnitPrice = $unitPrice;
         $this->Quantity = $quantity;
-        $this->SubTotal = $subTotal;
+        $this->SubTotal = $unitPrice + $quantity;
+    }
+
+    public function subTotal()
+    {
+        return $this->SubTotal;
     }
 }
