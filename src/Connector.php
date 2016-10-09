@@ -11,6 +11,7 @@ class Connector
 {
     private $soap;
     private $namespace = 'http://www.i-walletlive.com/payLIVE';
+    private $paylive = 'https://app.slydepay.com.gh/payLIVE/detailsnew.aspx?pay_token=';
     private $wsdl = 'https://app.slydepay.com.gh/webservices/paymentservice.asmx?wsdl';
     private $version = '1.4';
 
@@ -51,10 +52,39 @@ class Connector
                 'total' => $orderAmount->total(),
                 'comment1' => $description,
                 'comment2' => $comment,
-                'orderItems' => $orderItems->toArray()
+                'orderItems' => $orderItems->toArray(),
             ];
-            return $this->soap->ProcessPaymentOrder($params);
+            $response = $this->soap->ProcessPaymentOrder($params);
+            return $this->paylive + $response->ProcessPaymentOrderResult;
         } catch (\Exception $e) {
+            // die silently
+        }
+    }
+
+    public function confirmTransaction($payToken, $transactionId)
+    {
+        try {
+            $params = [
+                'payToken' => $payToken,
+                'transactionId' => $transactionId,
+            ];
+
+            return $this->soap->ConfirmTransaction($params);
+        } catch (Exception $e) {
+            // die silently
+        }
+    }
+
+    public function cancelTransaction($payToken, $transactionId)
+    {
+        try {
+            $params = [
+                'payToken' => $payToken,
+                'transactionId' => $transactionId,
+            ];
+
+            return $this->soap->CancelTransaction($params);
+        } catch (Exception $e) {
             // die silently
         }
     }
