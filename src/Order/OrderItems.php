@@ -23,4 +23,9 @@ class OrderItems
     {
         return $this->items;
     }
+
+    public function count()
+    {
+        return count($this->items);
+    }
 }

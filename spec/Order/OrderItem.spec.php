@@ -1,4 +1,0 @@
-<?php
-describe("OrderItem", function () {
-    
-});
