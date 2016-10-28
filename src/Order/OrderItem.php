@@ -23,4 +23,23 @@ class OrderItem
     {
         return $this->SubTotal;
     }
+
+    public function toArray()
+    {
+        return [
+            'ItemCode' => $this->ItemCode,
+            'ItemName' => $this->ItemName,
+            'UnitPrice' => $this->UnitPrice,
+            'Quantity' => $this->Quantity,
+            'SubTotal' => $this->subTotal(),
+        ];
+    }
+
+    public function __get($name) 
+    { 
+        if ($name == 'SubTotal') {
+            return $this->subTotal();
+        }
+        return $this->{$name}; 
+    }
 }
