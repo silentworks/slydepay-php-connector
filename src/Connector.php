@@ -23,7 +23,7 @@ class Connector
      */
     public function __construct($merchantEmail, $merchantSecretKey, $serviceType = 'C2B', $integrationMode = true)
     {
-        $this->soap = new SoapClient($this->wsdl);
+        $this->soap = $this->newSoapClient($this->wsdl);
         $headers = [
             'APIVersion' => $this->version,
             'MerchantEmail' => $merchantEmail,
@@ -32,7 +32,7 @@ class Connector
             'UseIntMode' => $integrationMode,
         ];
 
-        $soapHeader = new SoapHeader($this->namespace, "PaymentHeader", $headers);
+        $soapHeader = $this->newSoapHeader($this->namespace, $headers);
         $this->soap->__setSoapHeaders($soapHeader);
     }
 
@@ -58,6 +58,31 @@ class Connector
             return new ApiResponse($response->ProcessPaymentOrderResult);
         } catch (\Exception $e) {
             throw new ProcessPayment($e);
+        }
+    }
+
+    public function mobilePaymentOrder(
+        $orderId, 
+        $description,
+        OrderAmount $orderAmount, 
+        OrderItems $orderItems, 
+        $comment = null
+    ) {
+        try {
+            $params = [
+                'orderId' => $orderId,
+                'subtotal' => $orderAmount->subTotal(),
+                'shippingCost' => $orderAmount->shippingCost(),
+                'taxAmount' => $orderAmount->taxAmount(),
+                'total' => $orderAmount->total(),
+                'comment1' => $description,
+                'comment2' => $comment,
+                'orderItems' => $orderItems->toArray(),
+            ];
+            $response = $this->soap->mobilePaymentOrder($params);
+            return new ApiQrResponse($response->mobilePaymentOrderResult, $response->mobilePaymentOrderResult->token);
+        } catch (\Exception $e) {
+            throw new MobilePayment($e);
         }
     }
 
@@ -87,5 +112,15 @@ class Connector
         } catch (Exception $e) {
             // die silently
         }
+    }
+
+    protected function newSoapClient($wsdl)
+    {
+        return new SoapClient($wsdl);
+    }
+
+    protected function newSoapHeader($namespace, $headers)
+    {
+        return new SoapHeader($namespace, "PaymentHeader", $headers);
     }
 }

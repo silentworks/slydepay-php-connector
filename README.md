@@ -22,6 +22,10 @@ This is how you would process a payment with the Slydepay PHP Connector
 
 require 'vendor/autoload.php';
 
+use Slydepay\Order\OrderAmount;
+use Slydepay\Order\OrderItem;
+use Slydepay\Order\OrderItems;
+
 // Instantiate Slydepay connector
 $slydepay = new Slydepay\Connector("merchantEmail", "merchantSecretKey");
 
@@ -34,6 +38,19 @@ $orderItems = new OrderItems([
 // Create the OrderAmount for this Order
 $orderAmount = new OrderAmount($orderItems->subTotal(), 20, 5);
 
-// Make request to Slydepay and get the redirect url returned
-$redirect = $slydepay->processPaymentOrder("MO:150258398", "Test payment", $orderAmount, $orderItems);
+try {
+    // Make request to Slydepay and get the response object for the redirect url
+    $response = $slydepay->processPaymentOrder("MO:150258398", "Test payment", $orderAmount, $orderItems);
+    echo $response->redirectUrl();
+} catch (Slydepay\Exception\ProcessPayment $e) {
+    echo $e->getMessage();
+}
+```
+
+## Tests
+
+To execute the test suite, you'll need [kahlan](https://github.com/kahlan/kahlan).
+
+```bash
+$ kahlan
 ```
