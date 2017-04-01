@@ -1,6 +1,7 @@
 <?php
 
 use Slydepay\Order\OrderItem;
+
 describe("OrderItem", function () {
     it("should return the OrderItem properties", function () {
         $item = new OrderItem('SLYDE:1203920', 'Item One', 5, 1);

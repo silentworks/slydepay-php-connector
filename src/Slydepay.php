@@ -2,13 +2,16 @@
 
 namespace Slydepay;
 
+use Slydepay\Exception\CancelTransaction;
+use Slydepay\Exception\ConfirmTransaction;
+use Slydepay\Exception\MobilePayment;
 use Slydepay\Exception\ProcessPayment;
 use Slydepay\Order\OrderAmount;
 use Slydepay\Order\OrderItems;
 use SoapClient;
 use SoapHeader;
 
-class Connector
+class Slydepay
 {
     private $soap;
     private $namespace = 'http://www.i-walletlive.com/payLIVE';
@@ -36,6 +39,15 @@ class Connector
         $this->soap->__setSoapHeaders($soapHeader);
     }
 
+    /**
+     * @param string $orderId
+     * @param string $description
+     * @param OrderAmount $orderAmount
+     * @param OrderItems $orderItems
+     * @param string $comment
+     *
+     * @return ApiResponse
+     */
     public function processPaymentOrder(
         $orderId, 
         $description,
@@ -61,6 +73,15 @@ class Connector
         }
     }
 
+    /**
+     * @param string $orderId
+     * @param string $description
+     * @param OrderAmount $orderAmount
+     * @param OrderItems $orderItems
+     * @param string $comment
+     *
+     * @return ApiQrResponse
+     */
     public function mobilePaymentOrder(
         $orderId, 
         $description,
@@ -86,6 +107,12 @@ class Connector
         }
     }
 
+    /**
+     * @param string $payToken
+     * @param string $transactionId
+     *
+     * @return TransactionStatusResponse
+     */
     public function confirmTransaction($payToken, $transactionId)
     {
         try {
@@ -94,12 +121,19 @@ class Connector
                 'transactionId' => $transactionId,
             ];
 
-            return $this->soap->ConfirmTransaction($params);
+            $response = $this->soap->ConfirmTransaction($params);
+            return new TransactionStatusResponse($response->ConfirmTransactionResult);
         } catch (Exception $e) {
-            // die silently
+            throw new ConfirmTransaction($e);
         }
     }
 
+    /**
+     * @param string $payToken
+     * @param string $transactionId
+     *
+     * @return TransactionStatusResponse
+     */
     public function cancelTransaction($payToken, $transactionId)
     {
         try {
@@ -108,9 +142,10 @@ class Connector
                 'transactionId' => $transactionId,
             ];
 
-            return $this->soap->CancelTransaction($params);
+            $response = $this->soap->CancelTransaction($params);
+            return new TransactionStatusResponse($response->CancelTransactionResult);
         } catch (Exception $e) {
-            // die silently
+            throw new CancelTransaction($e);
         }
     }
 

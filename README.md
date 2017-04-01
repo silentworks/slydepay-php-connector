@@ -5,10 +5,10 @@ You can sign up for a Slydepay Merchant account at https://app.slydepay.com.gh/a
 
 ## Installation
 
-It's recommended that you use [Composer](https://getcomposer.org/) to install Slydepay PHP Connector.
+It's recommended that you use [Composer](https://getcomposer.org/) to install Slydepay PHP.
 
 ```bash
-$ composer require slydepay/php
+$ composer require slydepay/slydepay-php
 ```
 
 This will require Slydepay PHP and all its dependencies. Slydepay PHP required PHP 5.5 or newer.
@@ -26,8 +26,8 @@ use Slydepay\Order\OrderAmount;
 use Slydepay\Order\OrderItem;
 use Slydepay\Order\OrderItems;
 
-// Instantiate Slydepay connector
-$slydepay = new Slydepay\Connector("merchantEmail", "merchantSecretKey");
+// Instantiate Slydepay
+$slydepay = new Slydepay\Slydepay("merchantEmail", "merchantSecretKey");
 
 // Create a list of OrderItems with OrderItem objects
 $orderItems = new OrderItems([

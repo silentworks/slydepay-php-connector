@@ -1,6 +1,7 @@
 <?php
 
 use Slydepay\Order\OrderAmount;
+
 describe("OrderAmount", function () {
     it("should return the OrderAmount properties", function () {
         $amount = new OrderAmount(40, 12, 10);
