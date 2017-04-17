@@ -5,15 +5,17 @@ namespace Slydepay;
 class ApiQrResponse extends Response
 {
     private $response = null;
-    private $token = null;
+    private $qrImageUrl = null;
+    private $orderCode = null;
 
     /**
      * @param string  $response
      */
-    public function __construct($response, $token = null)
+    public function __construct($response, $qrImageUrl = null, $orderCode = null)
     {
         $this->response = $response;
-        $this->token = $token;
+        $this->qrImageUrl = $qrImageUrl;
+        $this->orderCode = $orderCode;
     }
 
     public function redirectUrl()
@@ -21,8 +23,13 @@ class ApiQrResponse extends Response
         return $this->paylive . $this->response;
     }
 
-    public function qrCode()
+    public function qrCodeUrl()
     {
-        return $this->paylive . $this->token;
+        return $this-$this->qrImageUrl;
+    }
+
+
+    public function orderCode(){
+        return $this->orderCode;
     }
 }
