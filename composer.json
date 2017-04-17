@@ -1,10 +1,14 @@
 {
-    "name": "slydepay/slydepay-php",
+    "name": "slydepay/slydepay-soap",
     "license": "MIT",
     "authors": [
         {
             "name": "Andrew Smith",
             "email": "a.smith@silentworks.co.uk"
+        },
+        {
+            "name": "Joseph Djomeda",
+            "email": "joseph@dreamoval.com"
         }
     ],
     "autoload": {

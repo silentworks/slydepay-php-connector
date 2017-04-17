@@ -2,11 +2,12 @@
 
 namespace Slydepay;
 
-use Slydepay\Exception\CancelTransaction;
-use Slydepay\Exception\ConfirmTransaction;
-use Slydepay\Exception\MobilePayment;
-use Slydepay\Exception\ProcessPayment;
-use Slydepay\Order\OrderAmount;
+use Slydepay\Exception\CancelTransactionException;
+use Slydepay\Exception\ConfirmTransactionException;
+use Slydepay\Exception\InvalidPayTokenException;
+use Slydepay\Exception\MobilePaymentException;
+use Slydepay\Exception\ProcessPaymentException;
+use Slydepay\Order\Order;
 use Slydepay\Order\OrderItems;
 use SoapClient;
 use SoapHeader;
@@ -42,68 +43,66 @@ class Slydepay
     /**
      * @param string $orderId
      * @param string $description
-     * @param OrderAmount $orderAmount
+     * @param Order $order
      * @param OrderItems $orderItems
      * @param string $comment
      *
      * @return ApiResponse
      */
-    public function processPaymentOrder(
-        $orderId, 
-        $description,
-        OrderAmount $orderAmount, 
-        OrderItems $orderItems, 
-        $comment = null
-    ) {
+    public function processPaymentOrder(Order $order) {
         try {
             $params = [
-                'orderId' => $orderId,
-                'subtotal' => $orderAmount->subTotal(),
-                'shippingCost' => $orderAmount->shippingCost(),
-                'taxAmount' => $orderAmount->taxAmount(),
-                'total' => $orderAmount->total(),
-                'comment1' => $description,
-                'comment2' => $comment,
-                'orderItems' => $orderItems->toArray(),
+                'orderId' => $order->getOrderCodeOrId(),
+                'subtotal' => $order->subTotal(),
+                'shippingCost' => $order->shippingCost(),
+                'taxAmount' => $order->taxAmount(),
+                'total' => $order->total(),
+                'comment1' => $order->getDescription(),
+                'comment2' => $order->getComment(),
+                'orderItems' => $order->getOrderItems()->toArray(),
             ];
             $response = $this->soap->ProcessPaymentOrder($params);
+            if(!Helper::isGUID($response->ProcessPaymentOrderResult))
+                throw new InvalidPayTokenException("Return token is not a valid GUID :: $response->ProcessPaymentOrderResult :: is returned instead");
             return new ApiResponse($response->ProcessPaymentOrderResult);
         } catch (\Exception $e) {
-            throw new ProcessPayment($e);
+            throw new ProcessPaymentException($e);
         }
     }
 
     /**
      * @param string $orderId
      * @param string $description
-     * @param OrderAmount $orderAmount
+     * @param Order $order
      * @param OrderItems $orderItems
      * @param string $comment
      *
      * @return ApiQrResponse
      */
-    public function mobilePaymentOrder(
-        $orderId, 
-        $description,
-        OrderAmount $orderAmount, 
-        OrderItems $orderItems, 
-        $comment = null
-    ) {
+    public function mobilePaymentOrder(Order $order) {
         try {
             $params = [
-                'orderId' => $orderId,
-                'subtotal' => $orderAmount->subTotal(),
-                'shippingCost' => $orderAmount->shippingCost(),
-                'taxAmount' => $orderAmount->taxAmount(),
-                'total' => $orderAmount->total(),
-                'comment1' => $description,
-                'comment2' => $comment,
-                'orderItems' => $orderItems->toArray(),
+                'orderId' => $order->getOrderCodeOrId(),
+                'subtotal' => $order->subTotal(),
+                'shippingCost' => $order->shippingCost(),
+                'taxAmount' => $order->taxAmount(),
+                'total' => $order->total(),
+                'comment1' => $order->getDescription(),
+                'comment2' => $order->getComment(),
+                'orderItems' => $order->getOrderItems()->toArray(),
             ];
             $response = $this->soap->mobilePaymentOrder($params);
-            return new ApiQrResponse($response->mobilePaymentOrderResult, $response->mobilePaymentOrderResult->token);
+
+            if(Helper::hasProperty($response->mobilePaymentOrderResult,'error'))
+                throw new InvalidPayTokenException("Return token is not a valid GUID ::" .
+                    $response->mobilePaymentOrderResult->error ." :: is returned instead");
+
+            return new ApiQrResponse($response->mobilePaymentOrderResult->token,
+                $response->mobilePaymentOrderResult->imageUrl,
+                $response->mobilePaymentOrderResult->orderCode);
+
         } catch (\Exception $e) {
-            throw new MobilePayment($e);
+            throw new MobilePaymentException($e);
         }
     }
 
@@ -124,7 +123,7 @@ class Slydepay
             $response = $this->soap->ConfirmTransaction($params);
             return new TransactionStatusResponse($response->ConfirmTransactionResult);
         } catch (Exception $e) {
-            throw new ConfirmTransaction($e);
+            throw new ConfirmTransactionException($e);
         }
     }
 
@@ -145,7 +144,7 @@ class Slydepay
             $response = $this->soap->CancelTransaction($params);
             return new TransactionStatusResponse($response->CancelTransactionResult);
         } catch (Exception $e) {
-            throw new CancelTransaction($e);
+            throw new CancelTransactionException($e);
         }
     }
 
