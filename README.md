@@ -8,7 +8,7 @@ You can sign up for a Slydepay Merchant account at https://app.slydepay.com.gh/a
 It's recommended that you use [Composer](https://getcomposer.org/) to install Slydepay PHP.
 
 ```bash
-$ composer require slydepay/slydepay-php
+$ composer require slydepay/slydepay-soap
 ```
 
 This will require Slydepay PHP and all its dependencies. Slydepay PHP required PHP 5.5 or newer.
@@ -22,7 +22,7 @@ This is how you would process a payment with the Slydepay PHP Connector
 
 require 'vendor/autoload.php';
 
-use Slydepay\Order\OrderAmount;
+use Slydepay\Order\Order;
 use Slydepay\Order\OrderItem;
 use Slydepay\Order\OrderItems;
 
@@ -35,12 +35,16 @@ $orderItems = new OrderItems([
     new OrderItem("1284", "Test Product2", 20, 2),
 ]);
 
-// Create the OrderAmount for this Order
-$orderAmount = new OrderAmount($orderItems->subTotal(), 20, 5);
+// Shipping and tax pulled either from ini/properties file. Hard coded here for illustration
+$shippingCost = 20; 
+$tax = 10;
+
+// Create the Order object for this transaction. 
+$order = new Order("order_id_1", $shippingCost,$tax,"description","no comment",$orderItems);
 
 try {
     // Make request to Slydepay and get the response object for the redirect url
-    $response = $slydepay->processPaymentOrder("MO:150258398", "Test payment", $orderAmount, $orderItems);
+    $response = $slydepay->processPaymentOrder($order);
     echo $response->redirectUrl();
 } catch (Slydepay\Exception\ProcessPayment $e) {
     echo $e->getMessage();
@@ -53,4 +57,9 @@ To execute the test suite, you'll need [kahlan](https://github.com/kahlan/kahlan
 
 ```bash
 $ kahlan
+```
+
+Or
+```bash
+$ php pathtoproject/vendor/kahlan/kahlan/bin/kahlan
 ```
