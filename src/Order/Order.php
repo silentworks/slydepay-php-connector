@@ -25,13 +25,15 @@ class Order
      * @param $comment known as comment2 on slydepay API, can provide further details on order
      * @param array $orderItems list of items purchased to be paid for by customer
      */
-    public function __construct($orderCodeOrId = null,
-                                $shippingCost = null,
-                                $taxAmount = null,
-                                $description = null,
-                                $comment = null,
-                                OrderItems $orderItems)
-    {
+    public function __construct(
+        OrderItems $orderItems,
+        $orderCodeOrId = null,
+        $shippingCost = null,
+        $taxAmount = null,
+        $description = null,
+        $comment = null
+    ) {
+    
         $this->orderCodeOrId = Helper::isNullOrEmptyString($orderCodeOrId)? Helper::getGUIDString(): $orderCodeOrId;
         $this->subTotal = $orderItems->subTotal();
         $this->shippingCost = $shippingCost;
@@ -61,7 +63,7 @@ class Order
     /**
      * @return mixed
      */
-    public function getOrderCodeOrId()
+    public function orderCodeOrId()
     {
         return $this->orderCodeOrId;
     }
@@ -69,7 +71,7 @@ class Order
     /**
      * @return mixed
      */
-    public function getDescription()
+    public function description()
     {
         return $this->description;
     }
@@ -77,7 +79,7 @@ class Order
     /**
      * @return mixed
      */
-    public function getComment()
+    public function comment()
     {
         return $this->comment;
     }
@@ -85,7 +87,7 @@ class Order
     /**
      * @return array
      */
-    public function getOrderItems()
+    public function orderItems()
     {
         return $this->orderItems;
     }

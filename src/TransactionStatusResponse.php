@@ -19,7 +19,7 @@ class TransactionStatusResponse extends Response
         $this->response = $response;
     }
 
-    public function statusCode() 
+    public function statusCode()
     {
         return $this->response;
     }

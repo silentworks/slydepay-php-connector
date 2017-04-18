@@ -35,11 +35,11 @@ class OrderItem
         ];
     }
 
-    public function __get($name) 
-    { 
+    public function __get($name)
+    {
         if ($name == 'SubTotal') {
             return $this->subTotal();
         }
-        return $this->{$name}; 
+        return $this->{$name};
     }
 }

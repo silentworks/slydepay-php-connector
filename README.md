@@ -40,7 +40,7 @@ $shippingCost = 20;
 $tax = 10;
 
 // Create the Order object for this transaction. 
-$order = new Order("order_id_1", $shippingCost,$tax,"description","no comment",$orderItems);
+$order = new Order($orderItems,"order_id_1", $shippingCost,$tax,"description","no comment");
 
 try {
     // Make request to Slydepay and get the response object for the redirect url
@@ -61,5 +61,5 @@ $ kahlan
 
 Or
 ```bash
-$ php pathtoproject/vendor/kahlan/kahlan/bin/kahlan
+$ php pathtoproject/vendor/bin/kahlan
 ```

@@ -29,7 +29,8 @@ class ApiQrResponse extends Response
     }
 
 
-    public function orderCode(){
+    public function orderCode()
+    {
         return $this->orderCode;
     }
 }
