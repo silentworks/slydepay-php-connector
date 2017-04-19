@@ -9,12 +9,6 @@
 use Slydepay\Helper;
 
 describe("Helper", function () {
-
-    it("should generate a valid GUID", function () {
-        $guid = Helper::getGUIDString();
-        expect($guid)->toMatch('/^\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/i');
-    });
-
     it("Should return true on correct GUID format", function () {
         //Got random GUID from https://www.uuidgenerator.net/guid
         $onlineGuid = "ba912958-c136-4eeb-9ac7-f89cd64db966";

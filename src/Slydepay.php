@@ -41,11 +41,7 @@ class Slydepay
     }
 
     /**
-     * @param string $orderId
-     * @param string $description
      * @param Order $order
-     * @param OrderItems $orderItems
-     * @param string $comment
      *
      * @return ApiResponse
      */
@@ -74,11 +70,7 @@ class Slydepay
     }
 
     /**
-     * @param string $orderId
-     * @param string $description
      * @param Order $order
-     * @param OrderItems $orderItems
-     * @param string $comment
      *
      * @return ApiQrResponse
      */

@@ -11,7 +11,7 @@ It's recommended that you use [Composer](https://getcomposer.org/) to install Sl
 $ composer require slydepay/slydepay-soap
 ```
 
-This will require Slydepay PHP and all its dependencies. Slydepay PHP required PHP 5.5 or newer.
+This will require Slydepay PHP and all its dependencies. Slydepay PHP requires PHP 5.6 or newer.
 
 ## Usage
 
@@ -40,7 +40,14 @@ $shippingCost = 20;
 $tax = 10;
 
 // Create the Order object for this transaction. 
-$order = new Order($orderItems,"order_id_1", $shippingCost,$tax,"description","no comment");
+$order = Order::createWithId(
+    $orderItems,
+    "order_id_1", 
+    $shippingCost,
+    $tax,
+    "description",
+    "no comment"
+);
 
 try {
     // Make request to Slydepay and get the response object for the redirect url

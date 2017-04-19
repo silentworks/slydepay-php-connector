@@ -2,8 +2,6 @@
 
 namespace Slydepay\Order;
 
-use Slydepay\Helper;
-
 class Order
 {
     private $orderCodeOrId;
@@ -16,25 +14,24 @@ class Order
     private $orderItems = [];
 
     /**
-     * Order constructor.
-     * @param $orderCodeOrId unique order code or id when null is passed an GUID is generated from Helper Class
+     * @param OrderItems $orderItems list of items purchased to be paid for by customer
+     * @param $orderCodeOrId unique order code or id
      * @param $subTotal order subtotal without any other cost associated
-     * @param $shippingCost order shipping cost if there is any.It will be added to total cost. Null can be passed
-     * @param $taxAmount order tax if applicable. It will be added to total cost. Null can be passed
-     * @param $description known as comment1 on slydepay API,can provide description to show to customer
+     * @param $shippingCost order shipping cost if there is any. It will be added to total cost.
+     * @param $taxAmount order tax if applicable. It will be added to total cost.
+     * @param $description known as comment1 on slydepay API, can provide description to show to customer
      * @param $comment known as comment2 on slydepay API, can provide further details on order
-     * @param array $orderItems list of items purchased to be paid for by customer
      */
-    public function __construct(
+    private function __construct(
         OrderItems $orderItems,
-        $orderCodeOrId = null,
-        $shippingCost = null,
-        $taxAmount = null,
-        $description = null,
+        $orderCodeOrId,
+        $shippingCost,
+        $taxAmount,
+        $description,
         $comment = null
     ) {
     
-        $this->orderCodeOrId = Helper::isNullOrEmptyString($orderCodeOrId)? Helper::getGUIDString(): $orderCodeOrId;
+        $this->orderCodeOrId = $orderCodeOrId;
         $this->subTotal = $orderItems->subTotal();
         $this->shippingCost = $shippingCost;
         $this->taxAmount = $taxAmount;
@@ -44,6 +41,63 @@ class Order
         $this->orderItems = $orderItems;
     }
 
+    /**
+     * Create an order with an orderCode generated automatically
+     * 
+     * @param OrderItems $orderItems list of items purchased to be paid for by customer
+     * @param $subTotal order subtotal without any other cost associated
+     * @param $shippingCost order shipping cost if there is any. It will be added to total cost.
+     * @param $taxAmount order tax if applicable. It will be added to total cost.
+     * @param $description known as comment1 on slydepay API, can provide description to show to customer
+     * @param $comment known as comment2 on slydepay API, can provide further details on order
+     */
+    public static function create(
+        OrderItems $orderItems,
+        $shippingCost,
+        $taxAmount,
+        $description,
+        $comment = null
+    ) {
+        $orderCode = self::generateGUID();
+
+        return new self(
+            $orderItems,
+            $orderCode,
+            $shippingCost,
+            $taxAmount,
+            $description,
+            $comment
+        );
+    }
+
+    /**
+     * Create an order with an orderId explicitly passed as a parameter
+     * 
+     * @param OrderItems $orderItems list of items purchased to be paid for by customer
+     * @param $orderId unique order id
+     * @param $subTotal order subtotal without any other cost associated
+     * @param $shippingCost order shipping cost if there is any. It will be added to total cost.
+     * @param $taxAmount order tax if applicable. It will be added to total cost.
+     * @param $description known as comment1 on slydepay API, can provide description to show to customer
+     * @param $comment known as comment2 on slydepay API, can provide further details on order
+     */
+    public static function createWithId(
+        OrderItems $orderItems,
+        $orderId,
+        $shippingCost,
+        $taxAmount,
+        $description,
+        $comment = null
+    ) {
+        return new self(
+            $orderItems,
+            $orderId,
+            $shippingCost,
+            $taxAmount,
+            $description,
+            $comment
+        );
+    }
 
     public function subTotal()
     {
@@ -61,7 +115,7 @@ class Order
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function orderCodeOrId()
     {
@@ -69,7 +123,7 @@ class Order
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function description()
     {
@@ -77,7 +131,7 @@ class Order
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function comment()
     {
@@ -85,15 +139,41 @@ class Order
     }
 
     /**
-     * @return array
+     * @return OrderItems
      */
     public function orderItems()
     {
         return $this->orderItems;
     }
 
+    /**
+     * @return int
+     */
     public function total()
     {
         return $this->total;
+    }
+
+    /**
+     * Generate a GUID string
+     * code taken from http://php.net/manual/en/function.com-create-guid.php#99425
+     * @return string
+     */
+    private static function generateGUID()
+    {
+        if (function_exists('com_create_guid') === true) {
+            return trim(com_create_guid(), '{}');
+        }
+        return sprintf(
+            '%04X%04X-%04X-%04X-%04X-%04X%04X%04X',
+            mt_rand(0, 65535),
+            mt_rand(0, 65535),
+            mt_rand(0, 65535),
+            mt_rand(16384, 20479),
+            mt_rand(32768, 49151),
+            mt_rand(0, 65535),
+            mt_rand(0, 65535),
+            mt_rand(0, 65535)
+        );
     }
 }

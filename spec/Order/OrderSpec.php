@@ -6,84 +6,74 @@ use Slydepay\Order\OrderItem;
 
 describe(
     "Order", function () {
-        it(
-            "should return the Order properties", function () {
+        it("should return the Order properties", function () {
+            $orderItems = new OrderItems([
+                new OrderItem('OR1234', 'Orange', 5, 2),
+                new OrderItem('MP1234', 'Mango', 8, 1),
+            ]);
 
-                $orderItems = new OrderItems(
-                    [
+            $actualArray = [
+                [
+                    'ItemCode' => 'OR1234',
+                    'ItemName' => 'Orange',
+                    'UnitPrice' => 5,
+                    'Quantity' => 2,
+                    'SubTotal' => 10
+                ],
+                [
+                    'ItemCode' => 'MP1234',
+                    'ItemName' => 'Mango',
+                    'UnitPrice' => 8,
+                    'Quantity' => 1,
+                    'SubTotal' => 8
+                ],
+            ];
+
+            $order = Order::createWithId(
+                $orderItems,
+                "order_id_1",
+                12,
+                10,
+                null,
+                null
+            );
+
+            expect($order->orderCodeOrId())->toBe("order_id_1");
+            expect($order->subTotal())->toBe(18);
+            expect($order->shippingCost())->toBe(12);
+            expect($order->taxAmount())->toBe(10);
+            expect($order->total())->toBe(40);
+            expect($order->description())->toBeNull();
+            expect($order->comment())->toBeNull();
+            expect($order->orderItems())->toBeA('object');
+            expect($order->orderItems()->toArray(true))->toBeA('array')->toBe($actualArray);
+        });
+
+        it("should return the Order properties ", function () {
+                $orderItems = new OrderItems([
                     new OrderItem('OR1234', 'Orange', 5, 2),
                     new OrderItem('MP1234', 'Mango', 8, 1),
-                    ]
-                );
+                ]);
 
                 $actualArray = [
-                [
-                'ItemCode' => 'OR1234',
-                'ItemName' => 'Orange',
-                'UnitPrice' => 5,
-                'Quantity' => 2,
-                'SubTotal' => 10
-                ],
-            [
-                'ItemCode' => 'MP1234',
-                'ItemName' => 'Mango',
-                'UnitPrice' => 8,
-                'Quantity' => 1,
-                'SubTotal' => 8
-            ],
-                ];
-
-                $order = new Order(
-                    $orderItems,
-                    "order_id_1",
-                    12,
-                    10,
-                    null,
-                    null
-                );
-
-                expect($order->orderCodeOrId())->toBe("order_id_1");
-                expect($order->subTotal())->toBe(18);
-                expect($order->shippingCost())->toBe(12);
-                expect($order->taxAmount())->toBe(10);
-                expect($order->total())->toBe(40);
-                expect($order->description())->toBeNull();
-                expect($order->comment())->toBeNull();
-                expect($order->orderItems())->toBeA('object');
-                expect($order->orderItems()->toArray(true))->toBeA('array')->toBe($actualArray);
-            }
-        );
-
-        it(
-            "should return the Order properties ", function () {
-
-                $orderItems = new OrderItems(
                     [
-                    new OrderItem('OR1234', 'Orange', 5, 2),
-                    new OrderItem('MP1234', 'Mango', 8, 1),
-                    ]
-                );
-
-                $actualArray = [
-                [
-                'ItemCode' => 'OR1234',
-                'ItemName' => 'Orange',
-                'UnitPrice' => 5,
-                'Quantity' => 2,
-                'SubTotal' => 10
-                ],
-            [
-                'ItemCode' => 'MP1234',
-                'ItemName' => 'Mango',
-                'UnitPrice' => 8,
-                'Quantity' => 1,
-                'SubTotal' => 8
-            ],
+                        'ItemCode' => 'OR1234',
+                        'ItemName' => 'Orange',
+                        'UnitPrice' => 5,
+                        'Quantity' => 2,
+                        'SubTotal' => 10
+                    ],
+                    [
+                        'ItemCode' => 'MP1234',
+                        'ItemName' => 'Mango',
+                        'UnitPrice' => 8,
+                        'Quantity' => 1,
+                        'SubTotal' => 8
+                    ],
                 ];
 
-                $order = new Order(
+                $order = Order::create(
                     $orderItems,
-                    null,
                     12,
                     10,
                     "description",
