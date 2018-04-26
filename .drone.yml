@@ -5,4 +5,4 @@ pipeline:
       - php -v
       - composer -V
       - composer install --prefer-dist
-      - ./vendor/bin/kahlan
+      - ./vendor/bin/kahlan --cc --reporter=bar
