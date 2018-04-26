@@ -1,0 +1,8 @@
+pipeline:
+  build:
+    image: webdevops/php-nginx:ubuntu-16.04
+    commands:
+      - php -v
+      - composer -V
+      - composer install --prefer-dist
+      - ./vendor/bin/kahlan
