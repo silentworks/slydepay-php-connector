@@ -18,10 +18,9 @@ jobs:
       image_resource: 
         type: docker-image
         source: 
-          repository: webdevops/php-nginx
-          tag: alpine
+          repository: webdevops/php-nginx:alpine
       inputs:
         - name: slydepay-php-connector
           path: .
       run:
-        path: slydepay-php-connector/test-setup
+        path: ./test-setup
