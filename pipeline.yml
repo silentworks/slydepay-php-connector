@@ -21,7 +21,7 @@ jobs:
           repository: webdevops/php-nginx
           tag: alpine
       inputs:
-        - name: slydepay_php
+        - name: slydepay-php-connector
           path: .
       run:
-        path: slydepay_php/test-setup
+        path: slydepay-php-connector/test-setup
