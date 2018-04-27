@@ -23,4 +23,4 @@ jobs:
         - name: slydepay-php-connector
           path: .
       run:
-        path: ./test-setup
+        path: slydepay-php-connector/test-setup.sh

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd slydepay_php
+cd slydepay-php-connector
 
 php -v
 
