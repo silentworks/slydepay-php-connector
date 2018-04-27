@@ -1,0 +1,27 @@
+resources:
+  - name: slydepay-php-connector
+    type: git
+    source:
+      uri: https://github.com/silentworks/slydepay-php-connector.git
+      branch: concourseci
+
+jobs:
+- name: slydepay-php-connector-test
+  serial: true
+  plan:
+  - get: slydepay-php-connector
+    trigger: true
+
+  - task: kahlan-test
+    config:
+      platform: linux
+      image_resource: 
+        type: docker-image
+        source: 
+          repository: webdevops/php-nginx
+          tag: alpine
+      inputs:
+        - name: slydepay_php
+          path: .
+      run:
+        path: slydepay_php/test-setup
